@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in · Udhaya Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy-900:#102B49; --navy-800:#16395E; --navy-700:#1D4775; --navy-100:#E3ECF5;
+    --gold-500:#EFA21C; --gold-400:#F4B547; --green-500:#2E8C5A;
+    --ink:#1A2733; --ink-soft:#51606E; --ink-mute:#8A97A4;
+    --line:#E4E9EF; --bg:#F4F6F9; --card:#fff;
+    --radius:16px; --shadow:0 18px 50px rgba(16,43,73,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex}
+  h1,h2,h3{font-family:'Poppins',sans-serif;letter-spacing:-.01em}
+  a{color:inherit}
+
+  .wrap{display:grid;grid-template-columns:1fr 1fr;width:100%;min-height:100vh}
+
+  /* ── left brand panel ── */
+  .brand-panel{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--navy-700),var(--navy-900));color:#fff;
+    display:flex;flex-direction:column;justify-content:space-between;padding:48px 52px}
+  .brand-panel::after{content:'';position:absolute;right:-120px;top:-120px;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(239,162,28,.28),transparent 70%)}
+  .bp-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .bp-top .name{font-family:'Poppins';font-weight:800;letter-spacing:.08em;font-size:20px}
+  .bp-mid{position:relative;z-index:1;max-width:380px}
+  .bp-mid h2{font-size:30px;font-weight:700;line-height:1.25;margin-bottom:16px}
+  .bp-mid h2 span{color:var(--gold-400)}
+  .bp-mid p{color:rgba(255,255,255,.72);font-size:15px;line-height:1.6}
+  .bp-points{list-style:none;margin-top:26px;display:flex;flex-direction:column;gap:13px}
+  .bp-points li{display:flex;align-items:center;gap:11px;font-size:14px;color:rgba(255,255,255,.85)}
+  .bp-points .tick{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .bp-foot{position:relative;z-index:1;font-size:12.5px;color:rgba(255,255,255,.5)}
+
+  /* ── right form panel ── */
+  .form-panel{display:flex;align-items:center;justify-content:center;padding:40px 24px}
+  .card{width:100%;max-width:400px}
+  .card .eyebrow{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-500);margin-bottom:8px}
+  .card h1{font-size:26px;color:var(--navy-800);margin-bottom:6px}
+  .card .sub{color:var(--ink-soft);font-size:14px;margin-bottom:26px}
+
+  .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid var(--line);
+    background:#fff;border-radius:12px;font-family:'Inter';font-weight:600;font-size:14.5px;color:var(--ink);cursor:pointer;transition:.15s}
+  .gbtn:hover{border-color:#cdd6e0;background:#fcfdfe}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:20px 0;color:var(--ink-mute);font-size:12px}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  .field{margin-bottom:15px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
+  .field input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-family:'Inter';font-size:14.5px;color:var(--ink);transition:.15s;background:#fff}
+  .field input:focus{outline:none;border-color:var(--navy-700);box-shadow:0 0 0 3px var(--navy-100)}
+  .field input::placeholder{color:var(--ink-mute)}
+
+  .submit{width:100%;margin-top:6px;padding:13px;border:none;border-radius:12px;background:var(--navy-800);color:#fff;
+    font-family:'Poppins';font-weight:600;font-size:15px;cursor:pointer;transition:.15s}
+  .submit:hover{background:var(--navy-700)}
+  .submit:disabled{opacity:.6;cursor:not-allowed}
+
+  .toggle{text-align:center;margin-top:20px;font-size:14px;color:var(--ink-soft)}
+  .toggle button{background:none;border:none;color:var(--navy-700);font-weight:600;cursor:pointer;font-size:14px;font-family:'Inter'}
+  .toggle button:hover{text-decoration:underline}
+
+  .msg{margin-top:16px;padding:11px 14px;border-radius:10px;font-size:13.5px;display:none}
+  .msg.err{display:block;background:#FBEAE9;color:#B23B33;border:1px solid #F3CFCC}
+  .msg.ok{display:block;background:#E6F4EC;color:#1E6E45;border:1px solid #BFE3CD}
+
+  .signup-only{display:none}
+  body.mode-signup .signup-only{display:block}
+  body.mode-signup .login-only{display:none}
+
+  @media(max-width:860px){
+    .wrap{grid-template-columns:1fr}
+    .brand-panel{display:none}
+    .form-panel{min-height:100vh}
+  }
+</style>
+</head>
+<body class="mode-login">
+  <div class="wrap">
+
+    <!-- LEFT: brand -->
+    <aside class="brand-panel">
+      <div class="bp-top">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" fill="#0E2641"/><path d="M11 31 A13 13 0 0 1 37 31" fill="#EFA21C"/><line x1="35" y1="24" x2="39" y2="24" stroke="#F4B547" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="31" x2="39" y2="31" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="30" r="3.4" fill="#fff"/></svg>
+        <span class="name">UDHAYA</span>
+      </div>
+
+      <div class="bp-mid">
+        <h2>Welcome to the <span>Udhaya</span> Portal</h2>
+        <p>Sign in to your account — whether you support a child, lend your time, or help run our work, this is your secure space.</p>
+        <ul class="bp-points">
+          <li><span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> One secure sign-in for everyone</li>
+          <li><span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Your information stays private</li>
+          <li><span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Built on trust, since 1997</li>
+        </ul>
+      </div>
+
+      <div class="bp-foot">United Human Action for Young Associates · Since 1997</div>
+    </aside>
+
+    <!-- RIGHT: form -->
+    <main class="form-panel">
+      <div class="card">
+        <div class="eyebrow"><span class="login-only">Sign in</span><span class="signup-only">Get started</span></div>
+        <h1><span class="login-only">Welcome back</span><span class="signup-only">Create your account</span></h1>
+        <p class="sub">
+          <span class="login-only">Sign in to continue to the portal.</span>
+          <span class="signup-only">First time here? Set up your account below.</span>
+        </p>
+
+        <!-- Google -->
+        <button class="gbtn" id="googleBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">or continue with email</div>
+
+        <!-- Full name (signup only) -->
+        <div class="field signup-only">
+          <label for="fullName">Full name</label>
+          <input id="fullName" type="text" placeholder="e.g. Priya Raman" autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@udhaya.org" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+
+        <button class="submit" id="submitBtn" type="button">
+          <span class="login-only">Log in</span><span class="signup-only">Create account</span>
+        </button>
+
+        <div class="toggle">
+          <span class="login-only">New to Udhaya? <button type="button" id="toSignup">Create an account</button></span>
+          <span class="signup-only">Already have an account? <button type="button" id="toLogin">Log in</button></span>
+        </div>
+
+        <div class="msg" id="msg"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Supabase client library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ───────────────────────────────────────────────────────────
+    // 1) YOUR SUPABASE DETAILS  (the anon key is safe to put here)
+    // ───────────────────────────────────────────────────────────
+    const SUPABASE_URL = "https://nvawtcujzkxkzjbpisuo.supabase.co";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_PUBLIC_KEY_HERE";
+    // Where to send people after they log in (we'll build this page next):
+    const AFTER_LOGIN = "dashboard.html";
+
+    // ── set up ──
+    let sb = null;
+    try {
+      if (window.supabase && SUPABASE_ANON_KEY !== "PASTE_YOUR_ANON_PUBLIC_KEY_HERE") {
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) { console.warn("Supabase not ready:", e); }
+
+    const $ = (id) => document.getElementById(id);
+    const msg = $("msg");
+    const show = (text, ok) => { msg.textContent = text; msg.className = "msg " + (ok ? "ok" : "err"); };
+
+    // ── toggle login / signup ──
+    $("toSignup").onclick = () => { document.body.className = "mode-signup"; msg.className = "msg"; };
+    $("toLogin").onclick  = () => { document.body.className = "mode-login";  msg.className = "msg"; };
+
+    // ── email login / signup ──
+    $("submitBtn").onclick = async () => {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const isSignup = document.body.classList.contains("mode-signup");
+
+      if (!email || !password) return show("Please enter your email and password.", false);
+      if (!sb) return show("Add your Supabase anon key in the code first, then deploy.", false);
+
+      $("submitBtn").disabled = true;
+      try {
+        if (isSignup) {
+          const fullName = $("fullName").value.trim();
+          const { error } = await sb.auth.signUp({
+            email, password, options: { data: { full_name: fullName } }
+          });
+          if (error) throw error;
+          show("Account created! Check your email to confirm, then log in.", true);
+        } else {
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          show("Signed in! Redirecting…", true);
+          setTimeout(() => (window.location.href = AFTER_LOGIN), 800);
+        }
+      } catch (err) {
+        show(err.message || "Something went wrong.", false);
+      } finally {
+        $("submitBtn").disabled = false;
+      }
+    };
+
+    // ── Google sign-in ──
+    $("googleBtn").onclick = async () => {
+      if (!sb) return show("Add your Supabase anon key in the code first, then deploy.", false);
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/" + AFTER_LOGIN }
+      });
+      if (error) show(error.message, false);
+    };
+
+    // ── if already logged in, skip to dashboard ──
+    (async () => {
+      if (!sb) return;
+      const { data } = await sb.auth.getSession();
+      if (data.session) window.location.href = AFTER_LOGIN;
+    })();
+  </script>
+</body>
+</html>
